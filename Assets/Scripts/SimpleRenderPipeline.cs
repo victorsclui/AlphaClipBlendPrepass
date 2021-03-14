@@ -139,7 +139,9 @@ namespace RenderPassTests
                         }
                         else if (mode == SimpleRenderPipeline.Mode.OnePassAlphaBlend)
                         {
-                            var mainPasssettings = new DrawingSettings(new ShaderTagId("OnePassAlphaBlend"), new SortingSettings(camera));
+                            var sortingSettings = new SortingSettings(camera);
+                            sortingSettings.criteria = SortingCriteria.BackToFront;
+                            var mainPasssettings = new DrawingSettings(new ShaderTagId("OnePassAlphaBlend"), sortingSettings);
                             using (var colorsDisposable = new NativeArray<int>(1, Allocator.Temp))
                             {
                                 var colors = colorsDisposable;
