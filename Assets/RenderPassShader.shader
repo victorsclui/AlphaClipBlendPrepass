@@ -29,8 +29,6 @@ Shader "Unlit/RenderPassShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
-
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -43,8 +41,8 @@ Shader "Unlit/RenderPassShader"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _ClipTex;
-            float4 _ClipTex_ST;
+            Texture2D _ClipTex;
+            SamplerState sampler_ClipTex;
 
             v2f vert(appdata v)
             {
@@ -54,10 +52,9 @@ Shader "Unlit/RenderPassShader"
                 return o;                
             }
             
-
             void frag(v2f i)
             {
-                fixed4 clipCol = tex2D(_ClipTex, i.uv);
+                fixed4 clipCol = _ClipTex.Sample(sampler_ClipTex, i.uv);
                 clip(clipCol - 0.1);            
             }
             ENDCG
@@ -74,8 +71,6 @@ Shader "Unlit/RenderPassShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
-
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -88,19 +83,21 @@ Shader "Unlit/RenderPassShader"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _MainTex0;
-            float4 _MainTex0_ST;
-            sampler2D _MainTex1;
-            float4 _MainTex1_ST;
-            sampler2D _MainTex2;
-            float4 _MainTex2_ST;
-            sampler2D _MainTex3;
-            float4 _MainTex3_ST;
+            Texture2D _MainTex0;
+            SamplerState sampler_MainTex0;
+            Texture2D _MainTex1;
+            SamplerState sampler_MainTex1;
+            Texture2D _MainTex2;
+            SamplerState sampler_MainTex2;
+            Texture2D _MainTex3;
+            SamplerState sampler_MainTex3;
 
+            CBUFFER_START(UnityPerMaterial)
             fixed4 _Color0;
             fixed4 _Color1;
             fixed4 _Color2;
             fixed4 _Color3;
+            CBUFFER_END
 
             v2f vert (appdata v)
             {
@@ -110,12 +107,12 @@ Shader "Unlit/RenderPassShader"
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex0, i.uv) * _Color0;
-                col += (tex2D(_MainTex1, i.uv) * _Color1) * (tex2D(_MainTex1, i.uv) * _Color1);
-                col += (tex2D(_MainTex2, i.uv) * _Color2) * (tex2D(_MainTex2, i.uv) * _Color2) * (tex2D(_MainTex2, i.uv) * _Color2);
-                col += (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3);
+                fixed4 col = _MainTex0.Sample(sampler_MainTex0, i.uv) * _Color0;
+                col += (_MainTex1.Sample(sampler_MainTex1, i.uv) * _Color1) * (_MainTex1.Sample(sampler_MainTex1, i.uv) * _Color1);
+                col += (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2) * (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2) * (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2);
+                col += (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3);
                 return col;
             }
             ENDCG
@@ -132,8 +129,6 @@ Shader "Unlit/RenderPassShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
-
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -146,22 +141,24 @@ Shader "Unlit/RenderPassShader"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _ClipTex;
-            float4 _ClipTex_ST;
+            Texture2D _ClipTex;
+            SamplerState sampler_ClipTex;
 
-            sampler2D _MainTex0;
-            float4 _MainTex0_ST;
-            sampler2D _MainTex1;
-            float4 _MainTex1_ST;
-            sampler2D _MainTex2;
-            float4 _MainTex2_ST;
-            sampler2D _MainTex3;
-            float4 _MainTex3_ST;
+            Texture2D _MainTex0;
+            SamplerState sampler_MainTex0;
+            Texture2D _MainTex1;
+            SamplerState sampler_MainTex1;
+            Texture2D _MainTex2;
+            SamplerState sampler_MainTex2;
+            Texture2D _MainTex3;
+            SamplerState sampler_MainTex3;
 
+            CBUFFER_START(UnityPerMaterial)
             fixed4 _Color0;
             fixed4 _Color1;
             fixed4 _Color2;
             fixed4 _Color3;
+            CBUFFER_END
 
             v2f vert (appdata v)
             {
@@ -173,13 +170,13 @@ Shader "Unlit/RenderPassShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 clipCol = tex2D(_ClipTex, i.uv);
+                fixed4 clipCol = _ClipTex.Sample(sampler_ClipTex, i.uv);
                 clip(clipCol - 0.1);
 
-                fixed4 col = tex2D(_MainTex0, i.uv) * _Color0;
-                col += (tex2D(_MainTex1, i.uv) * _Color1) * (tex2D(_MainTex1, i.uv) * _Color1);
-                col += (tex2D(_MainTex2, i.uv) * _Color2) * (tex2D(_MainTex2, i.uv) * _Color2) * (tex2D(_MainTex2, i.uv) * _Color2);
-                col += (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3);
+                fixed4 col = _MainTex0.Sample(sampler_MainTex0, i.uv) * _Color0;
+                col += (_MainTex1.Sample(sampler_MainTex1, i.uv) * _Color1) * (_MainTex1.Sample(sampler_MainTex1, i.uv) * _Color1);
+                col += (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2) * (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2) * (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2);
+                col += (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3);
                 return col;
             }
             ENDCG
@@ -196,9 +193,7 @@ Shader "Unlit/RenderPassShader"
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
-
-            struct appdata
+           struct appdata
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
@@ -210,24 +205,26 @@ Shader "Unlit/RenderPassShader"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _ClipTex;
-            float4 _ClipTex_ST;
+            Texture2D _ClipTex;
+            SamplerState sampler_ClipTex;
 
-            sampler2D _MainTex0;
-            float4 _MainTex0_ST;
-            sampler2D _MainTex1;
-            float4 _MainTex1_ST;
-            sampler2D _MainTex2;
-            float4 _MainTex2_ST;
-            sampler2D _MainTex3;
-            float4 _MainTex3_ST;
+            Texture2D _MainTex0;
+            SamplerState sampler_MainTex0;
+            Texture2D _MainTex1;
+            SamplerState sampler_MainTex1;
+            Texture2D _MainTex2;
+            SamplerState sampler_MainTex2;
+            Texture2D _MainTex3;
+            SamplerState sampler_MainTex3;
 
+            CBUFFER_START(UnityPerMaterial)
             fixed4 _Color0;
             fixed4 _Color1;
             fixed4 _Color2;
             fixed4 _Color3;
+            CBUFFER_END
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -235,14 +232,15 @@ Shader "Unlit/RenderPassShader"
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex0, i.uv) * _Color0;
-                col += (tex2D(_MainTex1, i.uv) * _Color1) * (tex2D(_MainTex1, i.uv) * _Color1);
-                col += (tex2D(_MainTex2, i.uv) * _Color2) * (tex2D(_MainTex2, i.uv) * _Color2) * (tex2D(_MainTex2, i.uv) * _Color2);
-                col += (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3) * (tex2D(_MainTex3, i.uv) * _Color3);
+                fixed4 clipCol = _ClipTex.Sample(sampler_ClipTex, i.uv);
+                clip(clipCol - 0.1);
 
-                col.a = tex2D(_ClipTex, i.uv);
+                fixed4 col = _MainTex0.Sample(sampler_MainTex0, i.uv) * _Color0;
+                col += (_MainTex1.Sample(sampler_MainTex1, i.uv) * _Color1) * (_MainTex1.Sample(sampler_MainTex1, i.uv) * _Color1);
+                col += (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2) * (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2) * (_MainTex2.Sample(sampler_MainTex2, i.uv) * _Color2);
+                col += (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3) * (_MainTex3.Sample(sampler_MainTex3, i.uv) * _Color3);
                 return col;
             }
             ENDCG
